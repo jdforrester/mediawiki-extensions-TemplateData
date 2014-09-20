@@ -11,65 +11,118 @@
 
 ***
 
-## 1. Introduction
+## 1 Introduction
 
 This document specifies the structure that TemplateData blobs must follow.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119). For readability, these words do not appear in all uppercase letters in this specification.
 
-## 2. Structures
+## 2 Terminology
 
-The blob must have exactly one top-most structure of key–value pairs (hereafter referred to as "objects" having "properties") that follow the specification for the "Root" structure, as specified in section 2.1 below.
+### 3.1 Template
 
-All of these objects have one common requirement. They must only have properties described in this specification. Additional properties not specified are not permitted. And, with the exception of those marked as "optional", none of the specified properties may be omitted.
+A page on a MediaWiki website that can be transcluded into other pages. Refer to [mediawiki.org](https://www.mediawiki.org/wiki/Help:Templates) for documentation about what templates are capable of and how to create or use them.
 
+### 3.2 Parameter
 
-### 2.1 Root
+A key–value pair that may be associated with the transclusion of a template in order to alter the behaviour of a template (and by extend, the content it will return as part of the transclusion).
 
+### 3.3 Client
 
-#### 2.1.1 <code id="root.name">name</code>
+A program interpreting TemplateData blobs.
+
+### 3.4 User
+
+The person using an application that is itself, or features, a TemplateData client.
+
+### 3.5 Author
+
+The person writing or modifying a TemplateData blob.
+
+## 3 Structures
+
+The TemplateData blob must have exactly one top-most structure of key–value pairs (hereafter referred to as "objects" having "properties") that follow the specification for the "Root" structure, as specified in section 3.1 below.
+
+All of these objects share the following requirements:
+
+1. They must only have properties described in this specification. Additional properties not specified are not permitted. And, with the exception of those marked as "Optional", none of the specified properties may be omitted.
+
+2. They must not have multiple properties with the same key.
+
+### 3.1 Root
+
+#### 3.1.1 `description`
+* Optional
+* Value: `null` or `InterfaceText`
+
+#### 3.1.2 `params`
+* Requires
+* Value: Object
+
+Describes each of the template's parameters. The `params` object maps parameter names to `Param` objects.
+
+#### 3.1.3 `paramOrder`
+* Optional
+* Value: Array
+
+The logical order in which parameters should be displayed. The `paramOrder` array must contain all parameter keys exactly once.
+
+#### 3.1.4 `sets`
 * Required
-* Content: Name String
+* Value: Array
 
-@structure {Object} Root
-	@property {null|InterfaceText} [description]
-	@property {Object} params Contains all parameters.
-	 Keyed by parameter name, contains #Param objects.
-	@property {Array} [paramOrder] The logical order in which parameters should be
-	 displayed. The array contains each parameter key exactly once.
-	@property {Array} sets List of groups of parameters that should be used
-	 together. A parameter can be in multiple sets. Not every parameter has to be
-	 in a set. The array contains #Set objects.
+List of groups of parameters that may be used together. Any given parameter may be part of multiple sets. A parameter is not required to be referenced in a set. The `sets` array must contain `Set` objects.
 
-@structure {Object} Param
-	@property {null|InterfaceText} [label] Label of this parameter.
-	 To be shown as a clear identifier for human users of the template; should
-	 generally be unique amongst the parameters (e.g. "First author's name" and
-	 "Second author's name", not just "Name" and "Name"). Defaults to the key of
-	 the object in `Root.params`.
-	@property {boolean} [required=false] Required status of this parameter.
-	 Whether the parameter is required to have an explicit value for the template
-	 to function properly. For example, the ISBN parameter in a template about a
-	 book's ISBN might be required, whereas other parameters such as issue date
-	 might not be. Client tools SHOULD automatically prompt users to fill in these
-	 paramters, and MAY prevent them from adding a template invocation with a
-	 required parameter unset.
-	@property {boolean} [suggested=false] Suggested status of this parameter.
-	 Whether the parameter is suggested to be set to an explicit value for the
-	 template to be valuable. This status is a less strong indicator of inclusion
-	 than `required`, and the template should function correctly without a
-	 `suggested` parameter being set. For example, in a book template the author's
-	 name might be suggested, whereas the title might be required. Client tools
-	 MAY automatically prompt users to fill in these paramters, but SHOULD NOT
-	 prevent users from adding a template invocation with a suggested parameter
-	 unset.
-	@property {null|InterfaceText} [description] Description of this parameter.
-	 To be shown as an explanatory text for what the purpose of the parameter is
-	 and some minor hints as to how to the format the contents. For example, a
-	 template parameter about the author of a book might be "The name of the
-	 author of the book, to positively identify and attribute the claim. The name
-	 should be given as it would appear in the author's native language, script
-	 and culture." or similar.
+### 3.2 Param
+
+#### 3.2.1 `label`
+* Optional
+* Value: `null` or `InterfaceText`
+* Default: Key of this `Param` object as referenced from `Root.params`
+
+Label of this parameter.
+
+Clients should use this when referring to a parameter in the interface for users. Authors are recommended to provide unique labels for each parameter.
+
+#### 3.2.2 `required`
+* Optional
+* Value: `boolean`
+* Default: `false`
+
+Required status of this parameter.
+
+Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer, may require a parameter "ISBN", whereas it may describe parameters such as "publication date" to not be required. Clients SHOULD automatically prompt users to fill in these parameters, and MAY prevent users from adding a template invocation with a required parameter unset.
+
+#### 3.2.3 `suggested`
+* Optional
+* Value: `boolean`
+* Default: `false`
+
+Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. The template must function correctly without a `suggested` parameter being set. For example, in a book template the author's name might be suggested, whereas the title might be required. Clients may encourage users to fill in a suggested parameter, but should not prevent users from transcluding a template when a suggested parameter has not been set.
+
+#### 3.2.4 `description`
+* Optional
+* Value: `null` or `InterfaceText`
+
+Explanatory text describing the purpose of this parameter. May include hints as to how to the format the parameter value. For example, a template parameter for the author of a book might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
+
+#### 3.2.5 `label`
+* Optional
+* Value:
+
+#### 3.2.6 `label`
+* Optional
+* Value:
+
+#### 3.2.7 `label`
+* Optional
+* Value:
+
+#### 3.2.8 `label`
+* Optional
+* Value:
+
+
 	@property {boolean|string} [deprecated=false] Deprecated status of this parameter.
 	 Description for why a parameter is deprecated, and what tasks instead should
 	 be set, or "true" if no description is wanted to be set.
