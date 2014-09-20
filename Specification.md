@@ -57,19 +57,19 @@ All of these objects share the following requirements:
 
 #### 3.1.2 `params`
 * Requires
-* Value: Object
+* Value: `Object`
 
 Describes each of the template's parameters. The `params` object maps parameter names to `Param` objects.
 
 #### 3.1.3 `paramOrder`
 * Optional
-* Value: Array
+* Value: `Array`
 
 The logical order in which parameters should be displayed. The `paramOrder` array must contain all parameter keys exactly once.
 
 #### 3.1.4 `sets`
 * Required
-* Value: Array
+* Value: `Array`
 
 List of groups of parameters that may be used together. Any given parameter may be part of multiple sets. A parameter is not required to be referenced in a set. The `sets` array must contain `Set` objects.
 
@@ -138,7 +138,7 @@ The kind of value the template expects to be associated with this parameter.
 
 Key to another Param object in `Root.params`. The current Param object will inherit from that one, with local properties overriding the inherited properties.
 
-#### 3.2.9 `autovalue`
+#### 3.2.10 `autovalue`
 * Optional
 * Value: `Type`
 
@@ -153,7 +153,7 @@ A dynamically generated default value such as today's date or the editing user's
 
 Label for this set.
 
-#### 3.3.1 params
+#### 3.3.2 params
 * Required
 * Value: `Array`
 
@@ -200,9 +200,9 @@ One of the following:
 A free-form string (no wikitext) in the content-language of the wiki, or,
 an object containing those strings keyed by language code.
 
-# 4 Examples
+## 4 Examples
 
-## 4.1 The "Unsigned" template
+### 4.1 The "Unsigned" template
 
 <pre lang="json">
 {
