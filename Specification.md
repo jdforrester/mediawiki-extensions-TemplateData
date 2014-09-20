@@ -53,7 +53,6 @@ Authors MUST enforce all aspects of the specification when creating, modifying a
 
 Requirements for non-Required properties only apply if the property is present.
 
-
 ### 3.1 Root
 
 #### 3.1.1 `description`
@@ -82,7 +81,9 @@ Consumers SHOULD display the parameters in this order.
 
 List of groups of parameters that can be used together.
 
-Authors MUST ensure that the `sets` object maps to `Set` objects. Authors MAY include a parameter in multiple `Set` objects. Authors are NOT REQUIRED to reference each parameter in the `sets` object.
+Authors MUST ensure that the `sets` object maps to `Set` objects. Authors MAY include a parameter in multiple `Set` objects. Authors are NOT REQUIRED to reference each parameter in any of the `Set` objects.
+
+Consumer MAY encourage users to add, edit or remove parameters in the groups specified in this array.
 
 ### 3.2 Param
 * Value: `Object`
@@ -97,62 +98,79 @@ Authors are RECOMMENDED to provide unique labels for each parameter.
 
 Consumers SHOULD use this when referring to a parameter in the interface for users. 
 
-#### 3.2.2 `required`
+#### 3.2.2 `description`
+* Value: `null` or `InterfaceText`
+
+Explanatory text describing the purpose of this parameter. For example, a template parameter `name` might have as it description _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
+
+Authors are RECOMMENDED to include this property for each parameter. Authors MAY use this value to include hints as to how to the format the parameter value.
+
+Consumers SHOULD provide users with this description for clarity when selecting and altering parameter values.
+
+#### 3.2.3 `required`
 * Value: `boolean`
 * Default: `false`
 
 Required status of this parameter. Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer might mark a parameter of "ISBN" as required, whereas it might consider parameters such as "publication date" to not be required. 
 
+Authors SHOULD only set this flag if the template will not function correctly without this parameter being set.
+
 Consumers SHOULD encourage users to fill in these parameters, and MAY prevent users from transcluding a template when a required parameter has not been set.
 
-#### 3.2.3 `suggested`
+#### 3.2.4 `suggested`
 * Value: `boolean`
 * Default: `false`
 
-Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. The template MUST function correctly without a `suggested` parameter being set. For example, in a book template the author's name might be suggested, whereas the title might be required. Clients MAY encourage users to fill in a suggested parameter, but SHOULD NOT prevent users transcluding a template when a suggested parameter has not been set.
+Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. For example, in a book template the author's name might be `suggested`, whereas the title might be `required`.
 
-#### 3.2.4 `description`
-* Optional
-* Value: `null` or `InterfaceText`
+Authors MUST NOT use `suggested` for parameters without which the template will not function correctly.
 
-Explanatory text describing the purpose of this parameter. MAY include hints as to how to the format the parameter value. For example, a template parameter "name" might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
+Consumers MAY encourage users to fill in a suggested parameter, but SHOULD NOT prevent users transcluding a template when a suggested parameter has not been set.
 
 #### 3.2.5 `deprecated`
-* Optional
 * Value: `boolean` or `string`
 * Default: `false`
 
-Specified whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated. To indicate that the parameter is deprecated, authors MAY set this to `true`, or to a `string` of explanatory text describing why the parameter is deprecated (and what parameter or parameters the user should use instead).
+Whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated.
+
+Authors are RECOMMENDED to provide a `string` of explanatory text describing why the parameter is deprecated (and what parameter or parameters the user should use instead).
 
 #### 3.2.6 `aliases`
-* Optional
 * Value: `Array`
 
-An alias is an alternative name for the parameter that may be used instead of (not in addition to) the primary name. Aliases MUST NOT have a dedicated Param object. To describe a discouraged parameter with additional information, authors SHOULD describe the parameter as deprecated instead of alias.
+An array of alternative names for the parameter. 
 
-#### 3.2.7 `default`
-* Optional
-* Value: `string`
+Authors MUST NOT provide a `Param` object for any alias. To describe a discouraged parameter with additional information, authors SHOULD describe the parameter as deprecated instead of alias.
 
-The default value (or description thereof) of a parameter as assumed by the template when the parameter is not present in a transclusion.
+Consumers SHOULD display aliases where entered as secondary to the primary name.
 
-#### 3.2.8 `type`
-* Optional
+#### 3.2.7 `type`
 * Value: `Type`
 
 The kind of value the template expects to be associated with this parameter.
 
-#### 3.2.9 `inherits`
-* Optional
+Consumers MAY provide type-specific helper tools for users entering values for parameters with this type.
+
+#### 3.2.8 `inherits`
 * Value: `string`
 
-Key that MUST map to another Param object in `Root.params`. The current Param object will inherit from that one, with local properties overriding the inherited properties.
+Another parameter from which this parameter will inherit its properites, with any local properties overriding the inherited properties.
 
-#### 3.2.10 `autovalue`
-* Optional
-* Value: `Type`
+Authors MUST ensure that they key maps to another Param object in `Root.params`.
 
-A dynamically generated default value, such as today's date or the editing user's name. SHOULD generally involve wikitext substitution, such as `{{subst:CURRENTMONTHNAME}}`.
+#### 3.2.9 `autovalue`
+* Value: `string`
+
+A dynamically-generated default value in wikitext, such as today's date or the editing user's name; this will often involve wikitext substitution, such as `{{subst:CURRENTYEAR}}`.
+
+Consumers MUST provide a parameter's autovalue when a template is inserted or edited, and SHOULD indicate this value to the user and give them the opportunity to set it to another value.
+
+#### 3.2.10 `default`
+* Value: `string`
+
+A static default value in wikitext (or description thereof) of a parameter as assumed by the template when the parameter is not present in a transclusion.
+
+Consumers SHOULD indicate this default value to the user when inserting or editing a template.
 
 ### 3.3 Set
 * Value: `Object`
@@ -161,7 +179,9 @@ A dynamically generated default value, such as today's date or the editing user'
 * Required
 * Value: `InterfaceText`
 
-Label for this set. Authors SHOULD ensure these are unique to be distinguishable.
+Label for this set.
+
+Authors SHOULD ensure these are unique to be distinguishable.
 
 #### 3.3.2 params
 * Required
@@ -171,6 +191,7 @@ A list of one or more `Root.params` keys.
 
 ### 3.4 Type
 * Value: `string`
+* Default: "unknown"
 
 One of the following:
 
