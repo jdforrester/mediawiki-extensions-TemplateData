@@ -1,14 +1,35 @@
-/*
-	Specification for the JSON descriptor as used in the
-	TemplateData extension for MediaWiki.
+# TemplateData Specification
 
-	Author: Timo Tijhof
-	Author: Trevor Parscal
-	Author: James D. Forrester
+## Living Standard
 
-	Property names listed in brackets (e.g. [foo]) are optional. This means
-	they may be omitted from the object. If a null value is allowed, this will
-	be explicitly specified.
+<dl>
+  <dt>This version</dt>
+  <dd><a href="https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FTemplateData/master/Specification.md">https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FTemplateData/master/Specification.md</a></dd>
+  <dt>Editors</dt>
+  <dd>Timo Tijhof, Trevor Parscal, James D. Forrester</dd>
+</dl>
+
+***
+
+## 1. Introduction
+
+This document specifies the structure that TemplateData blobs must follow.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119). For readability, these words do not appear in all uppercase letters in this specification.
+
+## 2. Structures
+
+The blob must have exactly one top-most structure of key–value pairs (hereafter referred to as "objects" having "properties") that follow the specification for the "Root" structure, as specified in section 2.1 below.
+
+All of these objects have one common requirement. They must only have properties described in this specification. Additional properties not specified are not permitted. And, with the exception of those marked as "optional", none of the specified properties may be omitted.
+
+
+### 2.1 Root
+
+
+#### 2.1.1 <code id="root.name">name</code>
+* Required
+* Content: Name String
 
 @structure {Object} Root
 	@property {null|InterfaceText} [description]
