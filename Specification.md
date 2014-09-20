@@ -19,23 +19,23 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMEND
 
 ## 2 Terminology
 
-### 3.1 Template
+### 2.1 Template
 
 A page on a MediaWiki website that can be transcluded into other pages. Refer to [mediawiki.org](https://www.mediawiki.org/wiki/Help:Templates) for documentation about what templates are capable of and how to create or use them.
 
-### 3.2 Parameter
+### 2.2 Parameter
 
 A key–value pair that may be associated with the transclusion of a template in order to alter the behaviour of a template (and by extend, the content it will return as part of the transclusion).
 
-### 3.3 Client
+### 2.3 Client
 
 A program interpreting TemplateData blobs.
 
-### 3.4 User
+### 2.4 User
 
 The person using an application that is itself, or features, a TemplateData client.
 
-### 3.5 Author
+### 2.5 Author
 
 The person writing or modifying a TemplateData blob.
 
@@ -106,44 +106,58 @@ Whether the parameter is recommended to be set to an explicit value for the temp
 
 Explanatory text describing the purpose of this parameter. May include hints as to how to the format the parameter value. For example, a template parameter for the author of a book might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
 
-#### 3.2.5 `label`
+#### 3.2.5 `deprecated`
 * Optional
-* Value:
+* Value: `boolean` or `string`
+* Default: `false`
 
-#### 3.2.6 `label`
-* Optional
-* Value:
-
-#### 3.2.7 `label`
-* Optional
-* Value:
-
-#### 3.2.8 `label`
-* Optional
-* Value:
-
-
-	@property {boolean|string} [deprecated=false] Deprecated status of this parameter.
+Deprecated status of this parameter.
 	 Description for why a parameter is deprecated, and what tasks instead should
 	 be set, or "true" if no description is wanted to be set.
-	@property {Array} [aliases] List of aliases.
+
+#### 3.2.6 `aliases`
+* Optional
+* Value: `Array`
+
+List of aliases.
 	 An alias is an alternative name for the parameter that may be used instead of
 	 (not in addition to) the primary name. Aliases are not documented in a
 	 separate Param object. If they need more information, they should be in their
 	 own property marked "deprecated".
-	@property {string} [default] The default value or description thereof.
-	@property {Type} [type] The type of the expected parameter value.
-	@property {string} [inherits] Key to another object in `Root.params`.
+
+#### 3.2.7 `default`
+* Optional
+* Value: `string`
+
+The default value or description thereof.
+
+#### 3.2.8 `type`
+* Optional
+* Value: `Type`
+
+The type of the expected parameter value.
+
+#### 3.2.9 `inherits`
+* Optional
+* Value: `string`
+
+Key to another object in `Root.params`.
 	 The current Param object will inherit from that one, with local properties
 	 overriding the inherited ones.
-	@property {Type} [autovalue] A dynamically generated default value such as today's
-	 date or the editing user's name. Should generally involve substitution,
-	 such as {{subst:CURRENTMONTHNAME}}.
 
-@structure {Object} Set
+#### 3.2.9 `autovalue`
+* Optional
+* Value: `Type`
+
+### 3.3 Set
+
+#### 3.3.1 label
 	@property {InterfaceText} label Label of this set.
+#### 3.3.1 params
 	@property {Array} params One or more parameter keys.
 
+
+### 3.4 Type
 @structure {string} Type
 	One of the following:
 	- unknown
@@ -176,21 +190,17 @@ Explanatory text describing the purpose of this parameter. May include hints as 
 	- line
 	  Short text field - use for names, labels, and other short-form fields.
 
+### 3.5 InterfaceText
 @structure {string|Object} InterfaceText
 	A free-form string (no wikitext) in the content-language of the wiki, or,
 	an object containing those strings keyed by language code.
 
 
-	Examples:
- */
+# 4 Examples
 
-/**
- * [[Template:Unsigned]]
- *
- * Example usage:
- *     {{unsigned|JohnDoe|2012-10-18}}
- *     {{unsigned|user=JohnDoe|year=2012|month=10|day=18|comment=blabla}}
- */
+## 4.1 The "Unsigned" template
+
+<pre lang="json">
 {
 	"description": "Label unsigned comments in a conversation.",
 	"params": {
@@ -233,3 +243,11 @@ Explanatory text describing the purpose of this parameter. May include hints as 
 		}
 	]
 }
+</pre>
+
+Example transclusions
+<pre>
+{{unsigned|JohnDoe|2012-10-18}}
+
+{{unsigned|user=JohnDoe|year=2012|month=10|day=18|comment=blabla}}
+</pre>
