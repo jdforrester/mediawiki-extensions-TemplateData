@@ -15,7 +15,7 @@
 
 This document specifies the structure that TemplateData blobs must follow.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119). For readability, these words do not appear in all uppercase letters in this specification.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://tools.ietf.org/html/rfc2119).
 
 ## 2 Terminology
 
@@ -27,17 +27,17 @@ A page on a MediaWiki website that can be transcluded into other pages. Refer to
 
 A key–value pair that may be associated with the transclusion of a template in order to alter the behaviour of a template (and by extend, the content it will return as part of the transclusion).
 
-### 2.3 Client
+### 2.3 Author
 
-A program interpreting TemplateData blobs.
+A program that creates and modifies TemplateData blobs, and distributes them to TemplateData consumer programs.
 
-### 2.4 User
+### 2.4 Consumer
 
-The person using an application that is itself, or features, a TemplateData client.
+A program interpreting TemplateData blobs supplied to it by a TemplateData author.
 
-### 2.5 Author
+### 2.5 User
 
-The person writing or modifying a TemplateData blob.
+A person using a TemplateData consumer application.
 
 ## 3 Structures
 
@@ -45,57 +45,67 @@ The TemplateData blob MUST have exactly one top-most structure of key–value pa
 
 All of these objects MUST share the following requirements:
 
-1. They MUST only have properties described in this specification. Additional properties not specified are not permitted. With the exception of those marked as "Optional", all of the specified properties MUST NOT be omitted.
+1. They MUST only have properties described in this specification. Additional properties not specified are not permitted. For properties and structures marked as "Required", Authors MUST ensure that they are present.
 
 2. They MUST not have multiple properties with the same key.
+
+Authors MUST enforce all aspects of the specification when creating, modifying and distributing TemplateData blobs.
+
+Requirements for non-Required properties only apply if the property is present.
+
 
 ### 3.1 Root
 
 #### 3.1.1 `description`
-* Optional
 * Value: `null` or `InterfaceText`
 
 #### 3.1.2 `params`
-* Requires
+* Required
 * Value: `Object`
 
-Describes each of the template's parameters. The `params` object MUST map parameter names to `Param` objects.
+Describes each of the template's parameters. 
+
+Authors MUST ensure that the `params` object maps parameter names to `Param` objects.
 
 #### 3.1.3 `paramOrder`
-* Optional
 * Value: `Array`
 
-The logical order in which parameters SHOULD be displayed. The `paramOrder` array MUST contain all parameter keys exactly once.
+The logical order of the parameters 
+
+Authors MUST ensure the `paramOrder` array contains all parameter keys exactly once.
+
+Consumers SHOULD display the parameters in this order. 
 
 #### 3.1.4 `sets`
 * Required
 * Value: `Array`
 
-List of groups of parameters that MAY be used together. Any given parameter MAY be part of multiple sets. A parameter is NOT REQUIRED to be referenced in a set. The `sets` array MUST contain `Set` objects.
+List of groups of parameters that can be used together.
+
+Authors MUST ensure that the `sets` object maps to `Set` objects. Authors MAY include a parameter in multiple `Set` objects. Authors are NOT REQUIRED to reference each parameter in the `sets` object.
 
 ### 3.2 Param
 * Value: `Object`
 
 #### 3.2.1 `label`
-* Optional
 * Value: `null` or `InterfaceText`
 * Default: Key of this `Param` object as referenced from `Root.params`
 
 Label of this parameter.
 
-Clients SHOULD use this when referring to a parameter in the interface for users. Authors are RECOMMENDED to provide unique labels for each parameter.
+Authors are RECOMMENDED to provide unique labels for each parameter.
+
+Consumers SHOULD use this when referring to a parameter in the interface for users. 
 
 #### 3.2.2 `required`
-* Optional
 * Value: `boolean`
 * Default: `false`
 
-Required status of this parameter.
+Required status of this parameter. Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer might mark a parameter of "ISBN" as required, whereas it might consider parameters such as "publication date" to not be required. 
 
-Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer might mark a parameter of "ISBN" as required, whereas it might consider parameters such as "publication date" to not be required. Clients SHOULD encourage users to fill in these parameters, and MAY prevent users from transcluding a template when a required parameter has not been set.
+Consumers SHOULD encourage users to fill in these parameters, and MAY prevent users from transcluding a template when a required parameter has not been set.
 
 #### 3.2.3 `suggested`
-* Optional
 * Value: `boolean`
 * Default: `false`
 
@@ -112,7 +122,7 @@ Explanatory text describing the purpose of this parameter. MAY include hints as 
 * Value: `boolean` or `string`
 * Default: `false`
 
-Specified whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated. To indicate the parameter is deprecated, authors CAN set this to `true`, or to a `string` of explanatory text describing why the parameter is deprecated (and what parameter or parameters the user should use instead).
+Specified whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated. To indicate that the parameter is deprecated, authors MAY set this to `true`, or to a `string` of explanatory text describing why the parameter is deprecated (and what parameter or parameters the user should use instead).
 
 #### 3.2.6 `aliases`
 * Optional
