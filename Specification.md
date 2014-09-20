@@ -74,6 +74,7 @@ The logical order in which parameters should be displayed. The `paramOrder` arra
 List of groups of parameters that may be used together. Any given parameter may be part of multiple sets. A parameter is not required to be referenced in a set. The `sets` array must contain `Set` objects.
 
 ### 3.2 Param
+* Value: `Object`
 
 #### 3.2.1 `label`
 * Optional
@@ -91,110 +92,113 @@ Clients should use this when referring to a parameter in the interface for users
 
 Required status of this parameter.
 
-Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer, may require a parameter "ISBN", whereas it may describe parameters such as "publication date" to not be required. Clients SHOULD automatically prompt users to fill in these parameters, and MAY prevent users from adding a template invocation with a required parameter unset.
+Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer, may require a parameter "ISBN", whereas it may consider parameters such as "publication date" to not be required. Clients should encourage users to fill in these parameters, and may prevent users from transcluding a template when a required parameter has not been set.
 
 #### 3.2.3 `suggested`
 * Optional
 * Value: `boolean`
 * Default: `false`
 
-Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. The template must function correctly without a `suggested` parameter being set. For example, in a book template the author's name might be suggested, whereas the title might be required. Clients may encourage users to fill in a suggested parameter, but should not prevent users from transcluding a template when a suggested parameter has not been set.
+Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. The template must function correctly without a `suggested` parameter being set. For example, in a book template the author's name might be suggested, whereas the title might be required. Clients may encourage users to fill in a suggested parameter, but should not prevent users transcluding a template when a suggested parameter has not been set.
 
 #### 3.2.4 `description`
 * Optional
 * Value: `null` or `InterfaceText`
 
-Explanatory text describing the purpose of this parameter. May include hints as to how to the format the parameter value. For example, a template parameter for the author of a book might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
+Explanatory text describing the purpose of this parameter. May include hints as to how to the format the parameter value. For example, a template parameter "name" might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
 
 #### 3.2.5 `deprecated`
 * Optional
 * Value: `boolean` or `string`
 * Default: `false`
 
-Deprecated status of this parameter.
-	 Description for why a parameter is deprecated, and what tasks instead should
-	 be set, or "true" if no description is wanted to be set.
+Specified whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated. To indicate the parameter being deprecated authors should set this to `true`, or to a `string` of explanatory text describing why the parameter is deprecated (and what parameter the user should use instead).
 
 #### 3.2.6 `aliases`
 * Optional
 * Value: `Array`
 
-List of aliases.
-	 An alias is an alternative name for the parameter that may be used instead of
-	 (not in addition to) the primary name. Aliases are not documented in a
-	 separate Param object. If they need more information, they should be in their
-	 own property marked "deprecated".
+An alias is an alternative name for the parameter that may be used instead of (not in addition to) the primary name. Aliases must not have a dedicated Param object. To describe a discouraged parameter with additional information, authors should describe the parameter as deprecated instead of alias.
 
 #### 3.2.7 `default`
 * Optional
 * Value: `string`
 
-The default value or description thereof.
+The default value (or description thereof) of a parameter as assumed by the template when the parameter is not present in a transclusion.
 
 #### 3.2.8 `type`
 * Optional
 * Value: `Type`
 
-The type of the expected parameter value.
+The kind of value the template expects to be associated with this parameter.
 
 #### 3.2.9 `inherits`
 * Optional
 * Value: `string`
 
-Key to another object in `Root.params`.
-	 The current Param object will inherit from that one, with local properties
-	 overriding the inherited ones.
+Key to another Param object in `Root.params`. The current Param object will inherit from that one, with local properties overriding the inherited properties.
 
 #### 3.2.9 `autovalue`
 * Optional
 * Value: `Type`
 
+A dynamically generated default value such as today's date or the editing user's name. Should generally involve wikitext substitution, such as `{{subst:CURRENTMONTHNAME}}`.
+
 ### 3.3 Set
+* Value: `Object`
 
 #### 3.3.1 label
-	@property {InterfaceText} label Label of this set.
-#### 3.3.1 params
-	@property {Array} params One or more parameter keys.
+* Required
+* Value: `InterfaceText`
 
+Label for this set.
+
+#### 3.3.1 params
+* Required
+* Value: `Array`
+
+A list of one or more `Root.params` keys.
 
 ### 3.4 Type
-@structure {string} Type
-	One of the following:
-	- unknown
-	  When no type is specified.
-	- string
-	  Any textual value.
-	- number
-	  Any numerical value (without decimal points or thousand separators).
-	- boolean
-	  A boolean value ('1' for true, '0' for false, '' for unknown).
-	- date
-	  A date in ISO 8601 format, e.g. "2014-05-09" or "2014-05-09T16:01:12Z".
-	- wiki-page-name
-	  A valid MediaWiki page name for the current wiki. Doesn't have to exist,
-	  but if not, should be a valid page name to create.
-	- wiki-user-name
-	  A valid MediaWiki user name for the current wiki. Doesn't have to exist,
-	  but if not, should be a valid user name to create. Should not include any
-	  localised or standard namespace prefix ("Foo" not "User:Foo").
-	- wiki-file-name
-	  A valid MediaWiki file name for the current wiki. Doesn't have to exist,
-	  but if not, should be a valid file name to upload. Should not include any
-	  localised or standard namespace prefix ("Foo" not "File:Foo").
-	- content
-	  Page content (such as text style, links and images etc.).
-	- unbalanced-wikitext
-	  Raw wikitext that should not be treated as standalone content because it
-	  is unbalanced (eg. templates concatenating incomplete wikitext as a bigger
-	  whole such as {{echo|before=<u>|after=</u>}})
-	- line
-	  Short text field - use for names, labels, and other short-form fields.
+* Value: `string`
+
+One of the following:
+
+- `unknown`
+  When no type is specified.
+- `string`
+  Any textual value.
+- `number`
+  Any numerical value (without decimal points or thousand separators).
+- `boolean`
+  A boolean value ('1' for true, '0' for false, '' for unknown).
+- `date`
+  A date in ISO 8601 format, e.g. "2014-05-09" or "2014-05-09T16:01:12Z".
+- `wiki-page-name`
+  A valid MediaWiki page name for the current wiki. Doesn't have to exist,
+  but if not, should be a valid page name to create.
+- `wiki-user-name`
+  A valid MediaWiki user name for the current wiki. Doesn't have to exist,
+  but if not, should be a valid user name to create. Should not include any
+  localised or standard namespace prefix ("Foo" not "User:Foo").
+- `wiki-file-name`
+  A valid MediaWiki file name for the current wiki. Doesn't have to exist,
+  but if not, should be a valid file name to upload. Should not include any
+  localised or standard namespace prefix ("Foo" not "File:Foo").
+- `content`
+  Page content (such as text style, links and images etc.).
+- `unbalanced-wikitext`
+  Raw wikitext that should not be treated as standalone content because it
+  is unbalanced (eg. templates concatenating incomplete wikitext as a bigger
+  whole such as `{{echo|before=<u>|after=</u>}}`)
+- `line`
+  Short text field - use for names, labels, and other short-form fields.
 
 ### 3.5 InterfaceText
-@structure {string|Object} InterfaceText
-	A free-form string (no wikitext) in the content-language of the wiki, or,
-	an object containing those strings keyed by language code.
+* Value: `string` or `Object`
 
+A free-form string (no wikitext) in the content-language of the wiki, or,
+an object containing those strings keyed by language code.
 
 # 4 Examples
 
