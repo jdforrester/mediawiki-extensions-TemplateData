@@ -41,13 +41,13 @@ The person writing or modifying a TemplateData blob.
 
 ## 3 Structures
 
-The TemplateData blob must have exactly one top-most structure of key–value pairs (hereafter referred to as "objects" having "properties") that follow the specification for the "Root" structure, as specified in section 3.1 below.
+The TemplateData blob MUST have exactly one top-most structure of key–value pairs (hereafter referred to as "objects" having "properties") that follow the specification for the "Root" structure, as specified in section 3.1 below.
 
-All of these objects share the following requirements:
+All of these objects MUST share the following requirements:
 
-1. They must only have properties described in this specification. Additional properties not specified are not permitted. And, with the exception of those marked as "Optional", none of the specified properties may be omitted.
+1. They MUST only have properties described in this specification. Additional properties not specified are not permitted. With the exception of those marked as "Optional", all of the specified properties MUST NOT be omitted.
 
-2. They must not have multiple properties with the same key.
+2. They MUST not have multiple properties with the same key.
 
 ### 3.1 Root
 
@@ -59,19 +59,19 @@ All of these objects share the following requirements:
 * Requires
 * Value: `Object`
 
-Describes each of the template's parameters. The `params` object maps parameter names to `Param` objects.
+Describes each of the template's parameters. The `params` object MUST map parameter names to `Param` objects.
 
 #### 3.1.3 `paramOrder`
 * Optional
 * Value: `Array`
 
-The logical order in which parameters should be displayed. The `paramOrder` array must contain all parameter keys exactly once.
+The logical order in which parameters SHOULD be displayed. The `paramOrder` array MUST contain all parameter keys exactly once.
 
 #### 3.1.4 `sets`
 * Required
 * Value: `Array`
 
-List of groups of parameters that may be used together. Any given parameter may be part of multiple sets. A parameter is not required to be referenced in a set. The `sets` array must contain `Set` objects.
+List of groups of parameters that MAY be used together. Any given parameter MAY be part of multiple sets. A parameter is NOT REQUIRED to be referenced in a set. The `sets` array MUST contain `Set` objects.
 
 ### 3.2 Param
 * Value: `Object`
@@ -83,7 +83,7 @@ List of groups of parameters that may be used together. Any given parameter may 
 
 Label of this parameter.
 
-Clients should use this when referring to a parameter in the interface for users. Authors are recommended to provide unique labels for each parameter.
+Clients SHOULD use this when referring to a parameter in the interface for users. Authors are RECOMMENDED to provide unique labels for each parameter.
 
 #### 3.2.2 `required`
 * Optional
@@ -92,33 +92,33 @@ Clients should use this when referring to a parameter in the interface for users
 
 Required status of this parameter.
 
-Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer, may require a parameter "ISBN", whereas it may consider parameters such as "publication date" to not be required. Clients should encourage users to fill in these parameters, and may prevent users from transcluding a template when a required parameter has not been set.
+Whether the template being described requires this parameter to have an explicit value in order to function properly. For example, a template used to render a hyperlink to a book viewer might mark a parameter of "ISBN" as required, whereas it might consider parameters such as "publication date" to not be required. Clients SHOULD encourage users to fill in these parameters, and MAY prevent users from transcluding a template when a required parameter has not been set.
 
 #### 3.2.3 `suggested`
 * Optional
 * Value: `boolean`
 * Default: `false`
 
-Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. The template must function correctly without a `suggested` parameter being set. For example, in a book template the author's name might be suggested, whereas the title might be required. Clients may encourage users to fill in a suggested parameter, but should not prevent users transcluding a template when a suggested parameter has not been set.
+Whether the parameter is recommended to be set to an explicit value for the template transclusion to be useful. This status is less strong indicator of inclusion than `required`. The template MUST function correctly without a `suggested` parameter being set. For example, in a book template the author's name might be suggested, whereas the title might be required. Clients MAY encourage users to fill in a suggested parameter, but SHOULD NOT prevent users transcluding a template when a suggested parameter has not been set.
 
 #### 3.2.4 `description`
 * Optional
 * Value: `null` or `InterfaceText`
 
-Explanatory text describing the purpose of this parameter. May include hints as to how to the format the parameter value. For example, a template parameter "name" might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
+Explanatory text describing the purpose of this parameter. MAY include hints as to how to the format the parameter value. For example, a template parameter "name" might be _"The name of the author of the book, to positively identify and attribute the claim. The name should be given as it would appear in the author's native language, script and culture."_.
 
 #### 3.2.5 `deprecated`
 * Optional
 * Value: `boolean` or `string`
 * Default: `false`
 
-Specified whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated. To indicate the parameter being deprecated authors should set this to `true`, or to a `string` of explanatory text describing why the parameter is deprecated (and what parameter the user should use instead).
+Specified whether this parameter is discouraged from usage. Set to `false` to indicate it is not deprecated. To indicate the parameter is deprecated, authors CAN set this to `true`, or to a `string` of explanatory text describing why the parameter is deprecated (and what parameter or parameters the user should use instead).
 
 #### 3.2.6 `aliases`
 * Optional
 * Value: `Array`
 
-An alias is an alternative name for the parameter that may be used instead of (not in addition to) the primary name. Aliases must not have a dedicated Param object. To describe a discouraged parameter with additional information, authors should describe the parameter as deprecated instead of alias.
+An alias is an alternative name for the parameter that may be used instead of (not in addition to) the primary name. Aliases MUST NOT have a dedicated Param object. To describe a discouraged parameter with additional information, authors SHOULD describe the parameter as deprecated instead of alias.
 
 #### 3.2.7 `default`
 * Optional
@@ -136,13 +136,13 @@ The kind of value the template expects to be associated with this parameter.
 * Optional
 * Value: `string`
 
-Key to another Param object in `Root.params`. The current Param object will inherit from that one, with local properties overriding the inherited properties.
+Key that MUST map to another Param object in `Root.params`. The current Param object will inherit from that one, with local properties overriding the inherited properties.
 
 #### 3.2.10 `autovalue`
 * Optional
 * Value: `Type`
 
-A dynamically generated default value such as today's date or the editing user's name. Should generally involve wikitext substitution, such as `{{subst:CURRENTMONTHNAME}}`.
+A dynamically generated default value, such as today's date or the editing user's name. SHOULD generally involve wikitext substitution, such as `{{subst:CURRENTMONTHNAME}}`.
 
 ### 3.3 Set
 * Value: `Object`
@@ -151,7 +151,7 @@ A dynamically generated default value such as today's date or the editing user's
 * Required
 * Value: `InterfaceText`
 
-Label for this set.
+Label for this set. Authors SHOULD ensure these are unique to be distinguishable.
 
 #### 3.3.2 params
 * Required
